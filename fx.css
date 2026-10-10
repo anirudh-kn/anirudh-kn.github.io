@@ -1,0 +1,86 @@
+@charset "UTF-8";
+/* ==========================================================================
+   fx.css — round 3 (additive; existing palette only). Loads after plus.css.
+   Everything is gated by prefers-reduced-motion and by classes that fx.js adds.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ---------- 1. scroll-speed reactive headings ---------- */
+  .fx-skew main h2, .fx-skew #hero-title {
+    transform: skewY(calc(var(--fx-v, 0) * -3deg)) scaleY(calc(1 + var(--fx-v, 0) * var(--fx-v, 0) * .03));
+    transform-origin: 0 60%;
+  }
+
+  /* ---------- 2. curtain transition ---------- */
+  .fx-curtain { position: fixed; inset: 0; z-index: 120; display: none; grid-template-columns: repeat(6, 1fr); pointer-events: none; }
+  .fx-curtain.on { display: grid; pointer-events: auto; }
+  .fx-curtain i { background: linear-gradient(180deg, #0f0e18, #181327); border-right: 1px solid #b2a1f414; transform: scaleY(0); }
+  .fx-curtain i:last-of-type { border-right: 0; }
+  .fx-curtain b {
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%; opacity: 0;
+    font: 700 36px/1 var(--font); letter-spacing: -1.6px; color: var(--text);
+  }
+  .fx-curtain b span { color: var(--accent); }
+
+  /* ---------- 3. pinned journey ---------- */
+  .fx-journey { position: relative; height: 330vh; }
+  .fx-j-pin {
+    position: sticky; top: 0; height: 100vh; padding-top: 84px; box-sizing: border-box;
+    display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 48px;
+  }
+  .fx-j-copy { position: relative; height: min(430px, 58vh); }
+  .fx-j-eyebrow { font: 400 8px/1 var(--mono); letter-spacing: 1.5px; color: #8a8199; }
+  .fx-j-count { margin-top: 14px; font: 400 10px/1 var(--mono); letter-spacing: 1.7px; color: #756b83; }
+  .fx-j-count b { color: var(--accent); font-weight: 400; }
+  .fx-j-stage { position: absolute; left: 0; right: 0; top: 74px; will-change: transform, opacity, filter; }
+  .fx-j-word {
+    font-size: clamp(56px, 8.4vw, 124px); font-weight: 500; line-height: 1; letter-spacing: -.055em; color: var(--text);
+  }
+  .fx-j-word span { color: var(--accent); }
+  .fx-j-line { margin-top: 24px; font-size: 14px; line-height: 1.7; color: var(--muted); max-width: 380px; }
+  .fx-j-dots { position: absolute; left: 0; bottom: 0; display: flex; gap: 7px; }
+  .fx-j-dots i { width: 26px; height: 2px; border-radius: 2px; background: #2a2733; transition: background .4s, box-shadow .4s; }
+  .fx-j-dots i.on { background: var(--accent); box-shadow: 0 0 9px #b2a1f488; }
+  .fx-j-canvas { width: min(100%, 560px); aspect-ratio: 1; justify-self: center; display: block; }
+  @media (max-width: 800px) {
+    .fx-journey { height: 290vh; }
+    .fx-j-pin { grid-template-columns: 1fr; grid-template-rows: minmax(0, 44vh) auto; gap: 8px; align-content: center; }
+    .fx-j-canvas { order: -1; width: min(100%, 44vh); }
+    .fx-j-copy { height: 230px; }
+    .fx-j-stage { top: 52px; }
+    .fx-j-word { font-size: clamp(48px, 15vw, 72px); }
+    .fx-j-line { font-size: 12px; margin-top: 16px; }
+  }
+
+  /* ---------- 4. horizontal film-strip ---------- */
+  .fx-hs { position: relative; }
+  .fx-hs-pin {
+    position: sticky; top: 0; height: 100vh; padding-top: 84px; box-sizing: border-box;
+    display: flex; align-items: center; overflow: hidden;
+  }
+  .project-list.fx-hs-on { display: flex; gap: 28px; margin: 0; width: max-content; will-change: transform; }
+  .fx-hs-on .project-row {
+    flex: 0 0 min(560px, 40vw); display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr auto;
+    grid-template-areas: "idx link" "info info" "stat stat"; gap: 18px 12px; align-content: stretch;
+    border: 1px solid #302838; border-radius: 10px; background: #12111b; padding: 30px;
+    min-height: min(450px, 62vh); transform-origin: 50% 50%;
+  }
+  .fx-hs-on .project-index { grid-area: idx; margin: 0; }
+  .fx-hs-on .project-link { grid-area: link; align-self: start; }
+  .fx-hs-on .project-information { grid-area: info; }
+  .fx-hs-on .project-stat { grid-area: stat; padding-left: 0; align-self: end; }
+  .fx-hs-on .project-information > p:not(.eyebrow) { max-width: none; }
+  .fx-hs-meta { position: absolute; bottom: 38px; display: flex; align-items: center; gap: 18px; }
+  .fx-hs-count { font: 400 10px/1 var(--mono); letter-spacing: 1.7px; color: #756b83; }
+  .fx-hs-count b { color: var(--accent); font-weight: 400; }
+  .fx-hs-bar { position: relative; flex: 1; height: 1px; background: #22232d; }
+  .fx-hs-bar i { position: absolute; inset: 0; background: linear-gradient(90deg, #74629f, var(--accent)); transform-origin: 0 50%; transform: scaleX(0); box-shadow: 0 0 8px #b2a1f488; }
+
+  /* ---------- 6. confetti ---------- */
+  .fx-confetti { position: fixed; left: 0; top: 0; z-index: 130; pointer-events: none; border-radius: 1px; }
+}
+
+@media print {
+  .fx-curtain, .fx-confetti, .fx-journey { display: none !important; }
+}

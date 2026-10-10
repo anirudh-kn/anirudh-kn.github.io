@@ -1,0 +1,209 @@
+@charset "UTF-8";
+/* ==========================================================================
+   motion.css — additive interaction + 3D motion layer for Anirudh K N portfolio
+   Loads AFTER style.css. Uses only the existing palette (--accent, --cyan …).
+   No content, colour, layout or copy is changed. Everything is disabled for
+   visitors who prefer reduced motion.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ---------- shared keyframes ---------- */
+  @keyframes m-rise {
+    from { opacity: 0; translate: 0 26px; scale: .97; filter: blur(5px); }
+    to   { opacity: 1; translate: 0 0;    scale: 1;   filter: blur(0); }
+  }
+  @keyframes m-fade     { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes m-portrait { from { opacity: 0; scale: 1.06; } to { opacity: 1; scale: 1; } }
+  @keyframes m-twinkle  { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+  @keyframes m-turn     { to { rotate: 90deg; } }
+  @keyframes m-bob      { 0%, 100% { translate: 0 0; } 50% { translate: 0 5px; } }
+  @keyframes m-sway-a   { from { rotate: -5deg; } to { rotate: 6deg; } }
+  @keyframes m-sway-b   { from { rotate: 5deg; }  to { rotate: -6deg; } }
+  @keyframes m-ping {
+    0%   { box-shadow: 0 0 0 0 #b2a1f488; }
+    70%  { box-shadow: 0 0 0 8px #b2a1f400; }
+    100% { box-shadow: 0 0 0 0 #b2a1f400; }
+  }
+  @keyframes m-wave {
+    0%   { transform: scale(.03); opacity: 0; }
+    14%  { opacity: .75; }
+    100% { transform: scale(1);   opacity: 0; }
+  }
+  @keyframes m-float-a { 0%, 100% { translate: 0 0; } 50% { translate: 0 -11px; } }
+  @keyframes m-float-b { 0%, 100% { translate: 0 0; } 50% { translate: 0 12px; } }
+  @keyframes m-dot {
+    0%, 100% { box-shadow: 0 0 0 5px var(--bg), 0 0 0 5px #9c86c300; }
+    50%      { box-shadow: 0 0 0 5px var(--bg), 0 0 14px 7px #9c86c340; }
+  }
+
+  /* ---------- hero: load-in choreography (pure CSS, no JS needed) ---------- */
+  .hero-copy > * { animation: m-rise .95s cubic-bezier(.16, 1, .3, 1) backwards; }
+  .hero-copy > :nth-child(1) { animation-delay: .05s; }
+  .hero-copy > :nth-child(2) { animation-delay: .14s; }
+  .hero-copy > :nth-child(3) { animation-delay: .22s; }
+  .hero-copy > :nth-child(4) { animation-delay: .34s; }
+  .hero-copy > :nth-child(5) { animation-delay: .44s; }
+  .hero-portrait  { animation: m-portrait 1.3s cubic-bezier(.16, 1, .3, 1) .15s backwards; }
+  .orb-position   { animation: m-fade 1.6s ease .25s backwards; }
+  .hero-footer    { animation: m-fade 1s ease .9s backwards; }
+
+  /* ---------- hero: ambient life ---------- */
+  .orbit-one { animation: m-sway-a 18s ease-in-out infinite alternate; }
+  .orbit-two { animation: m-sway-b 24s ease-in-out infinite alternate; }
+  .scene-point { animation: m-twinkle 3.4s ease-in-out infinite; }
+  .point-two   { animation-delay: -1.1s; }
+  .point-three { animation-delay: -2.2s; }
+  .scene-cross { animation: m-turn 9s ease-in-out infinite alternate; }
+  .cross-two   { animation-duration: 13s; }
+  .scroll-link span { display: inline-block; animation: m-bob 2s ease-in-out infinite; }
+  .hero-eyebrow .status-dot,
+  .contact-grid .eyebrow .status-dot { animation: m-ping 2.6s ease-out infinite; }
+
+  /* ---------- seismic card: continuous shock-waves from the epicentre ---------- */
+  .seismic-center::before,
+  .seismic-center::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 300px; height: 300px; margin: -150px 0 0 -150px;
+    border-radius: 50%; border: 1.5px solid #c7b8ff;
+    opacity: 0; pointer-events: none;
+    animation: m-wave 4.6s ease-out infinite;
+  }
+  .seismic-center::after { animation-delay: 2.3s; }
+
+  /* ---------- timeline: pulsing nodes ---------- */
+  .timeline-body::before { animation: m-dot 4.2s ease-in-out infinite; }
+  .timeline-item:nth-child(2) .timeline-body::before { animation-delay: -1.4s; }
+  .timeline-item:nth-child(3) .timeline-body::before { animation-delay: -2.8s; }
+
+  /* ---------- pause everything off-screen / in background tabs ---------- */
+  .hero.m-paused *, .hero.m-paused *::before, .hero.m-paused *::after,
+  html.m-hidden *, html.m-hidden *::before, html.m-hidden *::after {
+    animation-play-state: paused !important;
+  }
+
+  /* =======================================================================
+     Everything below needs motion.js (adds .m-on to <html>)
+     ======================================================================= */
+
+  /* ---------- fixed ambient layers ---------- */
+  .m-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+  .m-progress {
+    position: fixed; left: 0; top: 0; height: 2px; width: 100%; z-index: 60;
+    transform: scaleX(0); transform-origin: 0 50%; pointer-events: none;
+    background: linear-gradient(90deg, #74629f, var(--accent), var(--cyan));
+  }
+  .m-cursor {
+    position: fixed; left: 0; top: 0; width: 420px; height: 420px; margin: -210px 0 0 -210px;
+    border-radius: 50%; pointer-events: none; z-index: 45; opacity: 0;
+    background: radial-gradient(circle, rgba(178, 161, 244, .075), transparent 62%);
+    mix-blend-mode: screen; transition: opacity .5s; will-change: transform;
+  }
+  .m-cursor.on { opacity: 1; }
+  .m-spark {
+    position: fixed; left: 0; top: 0; width: 4px; height: 4px; margin: -2px 0 0 -2px;
+    border-radius: 50%; background: #c7b8ff; box-shadow: 0 0 8px var(--accent);
+    pointer-events: none; z-index: 70;
+  }
+
+  /* ---------- hero orb: drag to spin, click to shock ---------- */
+  .m-on .hero-art { cursor: grab; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+  .m-on .hero-art.is-dragging { cursor: grabbing; }
+  .m-on .orb-ring { transition: border-color .5s, box-shadow .5s; }
+  .m-on .orb-node { transition: box-shadow .5s; }
+  .m-on .data-orb.m-pulse .orb-ring { border-color: #c9baff88 !important; box-shadow: 0 0 9px #b2a1f44d; }
+  .m-on .data-orb.m-pulse .orb-node { box-shadow: 0 0 13px #cfc4f3; }
+  .m-shock {
+    position: absolute; width: 380px; height: 380px; border-radius: 50%;
+    border: 1px solid #c7b8ffaa; box-shadow: 0 0 30px #b2a1f433, inset 0 0 30px #b2a1f422;
+    pointer-events: none; z-index: 3;
+  }
+
+  /* ---------- seismic card: pointer parallax + ripples ---------- */
+  .m-on .seismic-lines {
+    transform: translate(calc(var(--px, 0) * 16px), calc(var(--py, 0) * 16px)) rotate(-23deg) skewY(18deg);
+    transition: transform .45s ease-out;
+  }
+  .m-on .seismic-center { translate: calc(var(--px, 0) * -9px) calc(var(--py, 0) * -9px); transition: translate .45s ease-out; }
+  .m-ripple {
+    position: absolute; border-radius: 50%; border: 1px solid #c7b8ff;
+    pointer-events: none; z-index: 1; transform: translate(-50%, -50%);
+  }
+
+  /* ---------- staggered 3D-ish reveal for cards/rows/pills ---------- */
+  .m-on .m-pre { opacity: 0; }
+  .m-on .m-in  { animation: m-rise .85s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms) backwards; }
+
+  /* ---------- tool strip + pills ---------- */
+  .m-on .tool-strip span { display: inline-block; transition: transform .3s cubic-bezier(.2, .8, .2, 1), color .3s; }
+  .m-on .pills li {
+    transition: border-color .2s, color .2s, background .2s, translate .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s;
+  }
+  .m-on .impact-grid dd, .m-on .project-stat strong, .m-on .about-facts strong, .m-on .education-score strong {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- magnetic controls ---------- */
+  .m-on .m-mag {
+    transition: translate .35s cubic-bezier(.2, .8, .2, 1), transform .2s, background .2s, border-color .2s, color .2s;
+  }
+
+  /* ---------- 3D tilt + spotlight (mouse devices) ---------- */
+  @media (hover: hover) and (pointer: fine) {
+    .tool-strip span:hover { transform: translateY(-3px); color: #cfc8e6; }
+    .pills li:hover { translate: 0 -3px; box-shadow: 0 8px 18px -8px #b2a1f455; }
+
+    .m-on .m-tilt { transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
+    .m-on .featured-project { position: relative; }
+    .m-on .featured-project.m-tilting {
+      transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    }
+    .m-on .impact-grid > div.m-tilting {
+      transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    }
+    .featured-project::after {
+      content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+      opacity: 0; transition: opacity .3s;
+      background: radial-gradient(460px circle at var(--mx, 50%) var(--my, 50%), rgba(199, 184, 255, .09), transparent 65%);
+    }
+    .featured-project.m-tilting::after { opacity: 1; }
+
+    .m-spot:hover {
+      background-image: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(178, 161, 244, .07), transparent 70%);
+    }
+
+    .project-information { transition: translate .35s cubic-bezier(.2, .8, .2, 1); }
+    .project-row:hover .project-information { translate: 6px 0; }
+    .project-index { transition: color .25s; }
+    .project-row:hover .project-index { color: var(--accent); }
+    .project-stat strong { transition: color .3s, text-shadow .3s; }
+    .project-row:hover .project-stat strong { color: #d8c9ee; text-shadow: 0 0 22px #b2a1f455; }
+
+    .credential-mark { transition: transform .9s cubic-bezier(.2, .8, .2, 1), border-color .3s; }
+    .credential-list li:hover .credential-mark { transform: perspective(300px) rotateY(360deg); border-color: #a78dce55; }
+
+    .impact-grid dd { transition: text-shadow .35s; }
+    .impact-grid > div:hover dd { text-shadow: 0 0 28px #b2a1f466; }
+  }
+
+  /* ---------- creative studio: depth parallax + idle float ---------- */
+  .m-on .art-panel { transition: transform .5s cubic-bezier(.2, .8, .2, 1), box-shadow .4s; }
+  .m-on .art-panel-back {
+    transform: rotate(-12deg) perspective(900px) rotateX(calc(var(--sy, 0) * -7deg)) rotateY(calc(var(--sx, 0) * 9deg));
+    animation: m-float-a 7s ease-in-out infinite;
+  }
+  .m-on .art-panel-front {
+    transform: rotate(10deg) perspective(900px) rotateX(calc(var(--sy, 0) * -12deg)) rotateY(calc(var(--sx, 0) * 14deg));
+    animation: m-float-b 9s ease-in-out infinite;
+  }
+  .m-on .studio-grid { translate: calc(var(--sx, 0) * -14px) calc(var(--sy, 0) * -14px); transition: translate .5s ease-out; }
+  .m-on .line-study  { transition: rotate 1.4s cubic-bezier(.2, .8, .2, 1); }
+  .m-on .creative-studio:hover .line-study  { rotate: 7deg; }
+  .m-on .creative-studio:hover .art-panel-front { box-shadow: 0 22px 46px #0006, 0 0 40px #b2a1f414; }
+  .m-on .creative-studio:hover .art-panel-back  { box-shadow: 0 20px 42px #0006; }
+}
+
+/* ---------- print: hide ambient layers ---------- */
+@media print {
+  .m-canvas, .m-cursor, .m-progress, .m-spark, .m-shock, .m-ripple { display: none !important; }
+}

@@ -1,0 +1,36 @@
+@charset "UTF-8";
+/* ==========================================================================
+   wow.css — round 5 (additive; existing palette only)
+   ========================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ---------- living background ---------- */
+  .wow-field { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; display: block; }
+
+  /* ---------- tool marquee ---------- */
+  .wow-mq { overflow: hidden; }
+  .wow-mq > .container { width: 100%; max-width: none; margin: 0; padding-inline: 0; display: block; overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
+  .wow-track { display: flex; width: max-content; will-change: transform; }
+  .wow-set { display: flex; align-items: center; flex: 0 0 auto; gap: clamp(22px, 3.2vw, 46px); padding-right: clamp(22px, 3.2vw, 46px); }
+  .wow-mq .wow-set span { font-size: clamp(15px, 1.7vw, 22px); white-space: nowrap; transition: color .3s; }
+  .wow-mq .wow-set span:hover { color: var(--accent-bright); }
+
+  /* ---------- ghost words ---------- */
+  .wow-gh-host { position: relative; isolation: isolate; }
+  .wow-gh-wrap { position: absolute; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
+  .wow-gh {
+    position: absolute; top: 8%; font-size: clamp(150px, 26vw, 380px); font-weight: 700; letter-spacing: -.08em; line-height: .9;
+    color: transparent; -webkit-text-stroke: 1px #b2a1f414; user-select: none; will-change: translate;
+  }
+  .wow-gh-l { left: -2%; }
+  .wow-gh-r { right: -2%; }
+
+  /* ---------- secret rain ---------- */
+  .wow-rain { position: fixed; left: 0; top: 0; z-index: 140; pointer-events: none; }
+}
+
+@media print {
+  .wow-field, .wow-rain, .wow-gh-wrap { display: none !important; }
+}
